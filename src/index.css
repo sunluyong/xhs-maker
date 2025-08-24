@@ -1,0 +1,457 @@
+:root {
+    --primary-color: #ff4757;
+    --secondary-color: #3742fa;
+    --text-color: #2f3542;
+    --border-color: #ddd;
+    --bg-color: #f1f2f6;
+    --white: #ffffff;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    background: var(--bg-color);
+    color: var(--text-color);
+    font-size: 14px;
+    line-height: 1.5;
+    overflow-x: hidden;
+    /* 防止横向滚动条 */
+}
+
+.app {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.toolbar {
+    background: var(--white);
+    border-bottom: 1px solid var(--border-color);
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: var(--shadow);
+    z-index: 1000;
+    flex-wrap: wrap;
+    /* 允许换行 */
+    min-height: 60px;
+    /* 最小高度 */
+}
+
+.workspace {
+    flex: 1;
+    display: flex;
+    position: relative;
+    overflow: hidden;
+}
+
+.canvas-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #e8e8e8;
+    padding: 20px;
+    overflow: auto;
+}
+
+.canvas {
+    position: relative;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+.properties-panel {
+    width: 500px;
+    min-width: 500px;
+    /* 确保最小宽度 */
+    max-width: 500px;
+    /* 限制最大宽度 */
+    background: var(--white);
+    border-left: 1px solid var(--border-color);
+    padding: 20px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    /* 防止横向滚动 */
+    box-sizing: border-box;
+}
+
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    background: var(--primary-color);
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn:hover {
+    background: #ff3742;
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: var(--secondary-color);
+}
+
+.btn-secondary:hover {
+    background: #2f3af4;
+}
+
+.btn-success {
+    background: #28a745;
+}
+
+.btn-success:hover {
+    background: #218838;
+}
+
+.input {
+    padding: 10px 14px;
+    /* 增加内边距 */
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+    /* 占满容器宽度 */
+    box-sizing: border-box;
+    /* 包含边框和内边距 */
+}
+
+.input:focus {
+    border-color: var(--primary-color);
+}
+
+.form-group {
+    margin-bottom: 20px;
+    /* 增加间距 */
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 8px;
+    /* 增加与输入框的间距 */
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.draggable-element {
+    position: absolute;
+    cursor: move;
+    user-select: none;
+    border: 2px solid transparent;
+    transition: border-color 0.2s;
+}
+
+.draggable-element:hover {
+    border-color: rgba(255, 71, 87, 0.5);
+}
+
+.draggable-element.selected {
+    border-color: var(--primary-color);
+}
+
+.element-controls {
+    position: absolute;
+    top: -30px;
+    right: 0;
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.draggable-element.selected .element-controls {
+    opacity: 1;
+}
+
+.control-btn {
+    width: 24px;
+    height: 24px;
+    border: none;
+    border-radius: 4px;
+    background: var(--primary-color);
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+
+.resize-handle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: var(--primary-color);
+    border: 2px solid white;
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.draggable-element.selected .resize-handle {
+    opacity: 1;
+}
+
+.resize-handle.bottom-right {
+    bottom: -4px;
+    right: -4px;
+    cursor: nw-resize;
+}
+
+.rotate-handle {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 16px;
+    height: 16px;
+    background: var(--secondary-color);
+    border: 2px solid white;
+    border-radius: 50%;
+    cursor: crosshair;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.draggable-element.selected .rotate-handle {
+    opacity: 1;
+}
+
+.color-picker-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.color-preview {
+    width: 50px;
+    /* 增加宽度 */
+    height: 36px;
+    /* 增加高度 */
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    /* 轻微增加圆角 */
+    cursor: pointer;
+    transition: all 0.2s ease;
+    /* 添加动画效果 */
+}
+
+.color-preview:hover {
+    transform: scale(1.05);
+    /* 添加悬停效果 */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.color-picker-popup {
+    position: absolute;
+    top: 35px;
+    left: 0;
+    z-index: 1000;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: var(--shadow);
+    max-width: 500px;
+    /* 限制最大宽度 */
+    overflow: hidden;
+    /* 防止内容溢出 */
+}
+
+.file-input {
+    display: none;
+}
+
+.upload-area {
+    border: 2px dashed var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.upload-area:hover {
+    border-color: var(--primary-color);
+}
+
+.upload-area.dragover {
+    border-color: var(--primary-color);
+    background: rgba(255, 71, 87, 0.05);
+}
+
+/* 渐变色相关样式 */
+.gradient-preset {
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.gradient-preset:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.color-swatch {
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.color-swatch:hover {
+    transform: scale(1.1);
+}
+
+.color-swatch.selected {
+    box-shadow: 0 0 0 2px var(--primary-color);
+}
+
+.btn.active {
+    background: var(--secondary-color);
+    color: white;
+}
+
+.btn.active:hover {
+    background: #2f3af4;
+}
+
+/* 滚动条美化 */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* 历史记录面板样式 */
+.history-panel {
+    width: 380px;
+    min-width: 380px;
+    max-width: 380px;
+    background: var(--white);
+    border-right: 1px solid var(--border-color);
+    padding: 20px;
+    overflow: hidden;
+    /* 移除滚动条，让子元素处理 */
+    box-sizing: border-box;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.history-header {
+    flex-shrink: 0;
+    /* 头部不压缩 */
+    background: var(--white);
+    margin-bottom: 12px;
+}
+
+.history-list {
+    flex: 1;
+    /* 占据剩余空间 */
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 4px;
+    margin-right: -4px;
+    /* 补偿padding */
+}
+
+.history-item {
+    position: relative;
+    user-select: none;
+    margin-bottom: 2px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.history-item:hover {
+    background-color: #f1f2f6;
+    border-color: #ddd;
+}
+
+.history-item.current {
+    background-color: #ff4757;
+    color: #ffffff;
+}
+
+.history-item.current::before {
+    content: '';
+    position: absolute;
+    left: -12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 20px;
+    background: var(--primary-color);
+    border-radius: 2px;
+}
+
+.history-item.future {
+    background-color: #f8f9fa;
+    color: #999;
+    opacity: 0.6;
+}
+
+.history-stats {
+    flex-shrink: 0;
+    margin-top: 16px;
+    padding: 12px;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+}
+
+.btn-disabled {
+    background: #e9ecef !important;
+    color: #6c757d !important;
+    cursor: not-allowed !important;
+    opacity: 0.6;
+}
+
+.btn-disabled:hover {
+    background: #e9ecef !important;
+    transform: none !important;
+}
+
+/* 加载动画 */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
