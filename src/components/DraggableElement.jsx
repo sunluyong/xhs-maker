@@ -67,18 +67,20 @@ const DraggableElement = ({
         const handleMouseUp = () => {
             setIsDragging(false)
 
-            // 立即应用最终位置
+            // 二次确认最终位置，确保状态同步
+            const finalX = lastPosition.x
+            const finalY = lastPosition.y
+
+            // 立即应用最终位置到临时状态
             onUpdate({
-                x: lastPosition.x,
-                y: lastPosition.y
+                x: finalX,
+                y: finalY
             }, { silent: true, skipHistory: true })
 
-            // 延迟提交历史记录，确保位置已经完全应用
-            requestAnimationFrame(() => {
-                if (onCommitTempState) {
-                    onCommitTempState(`移动${element.type === 'text' ? '文本' : '图片'}`)
-                }
-            })
+            // 立即提交历史记录，不需要延迟
+            if (onCommitTempState) {
+                onCommitTempState(`移动${element.type === 'text' ? '文本' : '图片'}`)
+            }
         }
 
         document.addEventListener('mousemove', handleMouseMove, { passive: false })
@@ -149,18 +151,20 @@ const DraggableElement = ({
             document.removeEventListener('mousemove', handleMouseMove)
             document.removeEventListener('mouseup', handleMouseUp)
 
-            // 确保最终尺寸应用
+            // 二次确认最终尺寸
+            const finalWidth = lastSize.width
+            const finalHeight = lastSize.height
+
+            // 确保最终尺寸应用到临时状态
             onUpdate({
-                width: lastSize.width,
-                height: lastSize.height
+                width: finalWidth,
+                height: finalHeight
             }, { silent: true, skipHistory: true })
 
-            // 缩放结束时提交历史记录
-            requestAnimationFrame(() => {
-                if (onCommitTempState) {
-                    onCommitTempState(`缩放${element.type === 'text' ? '文本' : '图片'}`)
-                }
-            })
+            // 缩放结束时立即提交历史记录
+            if (onCommitTempState) {
+                onCommitTempState(`缩放${element.type === 'text' ? '文本' : '图片'}`)
+            }
         }
 
         document.addEventListener('mousemove', handleMouseMove)
@@ -196,15 +200,16 @@ const DraggableElement = ({
             document.removeEventListener('mousemove', handleMouseMove)
             document.removeEventListener('mouseup', handleMouseUp)
 
-            // 确保最终旋转角度应用
-            onUpdate({ rotation: lastRotation }, { silent: true, skipHistory: true })
+            // 二次确认最终旋转角度
+            const finalRotation = lastRotation
 
-            // 旋转结束时提交历史记录
-            requestAnimationFrame(() => {
-                if (onCommitTempState) {
-                    onCommitTempState(`旋转${element.type === 'text' ? '文本' : '图片'}`)
-                }
-            })
+            // 确保最终旋转角度应用到临时状态
+            onUpdate({ rotation: finalRotation }, { silent: true, skipHistory: true })
+
+            // 旋转结束时立即提交历史记录
+            if (onCommitTempState) {
+                onCommitTempState(`旋转${element.type === 'text' ? '文本' : '图片'}`)
+            }
         }
 
         document.addEventListener('mousemove', handleMouseMove)

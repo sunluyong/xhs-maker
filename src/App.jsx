@@ -170,20 +170,26 @@ function App() {
   // 提交临时状态到历史记录
   const commitTempState = useCallback((action) => {
     if (tempElements !== null) {
-      // 直接使用tempElements作为新状态，避免回弹
+      // 保存当前临时状态
+      const finalElements = [...tempElements]
+      const finalBackground = tempBackground || canvasBackground
+
+      // 创建新的历史记录状态
       const newState = {
-        elements: tempElements,
-        background: canvasBackground
+        elements: finalElements,
+        background: finalBackground
       }
-      // 直接使用 addToHistory，避免 updateStateWithHistory 的状态清空
+
+      // 立即添加到历史记录，确保状态连续性
       addToHistory(action, newState)
-      // 使用一帧时间延迟清空，确保 DOM 已更新
-      requestAnimationFrame(() => {
+
+      // 延迟清空临时状态，确保历史记录已经生效
+      setTimeout(() => {
         setTempElements(null)
         setTempBackground(null)
-      })
+      }, 50) // 增加延迟时间，确保状态已完全切换
     }
-  }, [tempElements, canvasBackground, addToHistory])
+  }, [tempElements, tempBackground, canvasBackground, addToHistory])
 
   // 删除元素
   const deleteElement = useCallback((id) => {

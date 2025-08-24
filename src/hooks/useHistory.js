@@ -24,20 +24,17 @@ const useHistory = (initialState = []) => {
             return
         }
 
-        // 防抖逻辑：对于拖拽、旋转等操作，延迟300ms记录
+        // 对于拖拽、旋转、缩放操作，由commitTempState统一控制，不再使用防抖
         const isDragOrRotate = action.includes('移动') || action.includes('旋转') || action.includes('缩放')
 
         if (isDragOrRotate) {
-            // 清除之前的定时器
+            // 清除之前的定时器（如果有）
             if (debounceTimer.current) {
                 clearTimeout(debounceTimer.current)
-            }
-
-            // 设置新的定时器
-            debounceTimer.current = setTimeout(() => {
-                addHistoryRecord(action, newState)
                 debounceTimer.current = null
-            }, 300)
+            }
+            // 直接记录，不使用防抖
+            addHistoryRecord(action, newState)
         } else {
             // 非拖拽操作直接记录
             addHistoryRecord(action, newState)
